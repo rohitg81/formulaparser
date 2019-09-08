@@ -2,87 +2,74 @@ package com.practice.parser;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class ExpressionParser {
 	
-	private static char EMPTY = 0;
 	
-
-	
-	
-	
-	public static void main(String[] args) {	
-		
-		
-		boolean isEvalComplete = true;		
-		String expression = "((scalar[scal_1] * driver[driv_1]) + scalar[scal_1]) - driver[drive_1] )";
-	    
+	static Map<String,Integer> interim = new HashMap<>();
+	public static void main(String[] args) {			
+	boolean isEvalComplete = true;		
+	String expression = "((scalar['scal_1'] + driver['driv_1']) + scalar['scal_1']) + driver['driv_2'])";
+	int index=1;    
 		while(isEvalComplete) {
-			 String subExpr = StringUtils.substringBetween(expression, "(", ")");
-			 if(subExpr==null) {
-				 isEvalComplete=false;
-				 break;
-			 }
+			if(!expression.contains("(")) {
+				isEvalComplete=false;
+				break;
+			}
+			
+			String subExpr = expression.substring(expression.lastIndexOf("(")+1, expression.indexOf(")"));
 			int result = evaluate(subExpr);
-			expression = expression.replace(subExpr, String.valueOf(result));		
-			expression = expression.replace(expression.charAt(expression.lastIndexOf("(")), EMPTY);		
-			expression = expression.replaceFirst(")","");
+			String key = "result"+index;
+			interim.put(key, result);
+			String enclosedSubExpr = expression.substring(expression.lastIndexOf("("), expression.indexOf(")") + 1);		
+			expression = expression.replace(enclosedSubExpr, key);		
 			System.out.println("after evaluating ->"+expression);
+			++index;
 		}
+		
+		System.out.println("final expression"+expression);
 	}
 	
 	
 	private static int evaluate(String subExpr) {
 		
-	  //  ValidatorUtils.checkIfExpressionContainsValidOperator(subExpr);
+	   String trimmedWhiteSpaceExpression = subExpr.replaceAll(" ", "");
+		
+	   boolean isValidExpression =  ValidatorUtils.validateExpression(trimmedWhiteSpaceExpression);
+	   
+	   String left = trimmedWhiteSpaceExpression.substring(0, trimmedWhiteSpaceExpression.indexOf("+"));
+
+	   
+	   String right = trimmedWhiteSpaceExpression.substring(trimmedWhiteSpaceExpression.indexOf("+")+1, trimmedWhiteSpaceExpression.length());
 	    
-	   // String leftExpression = 
-		
-		
-		return 0;
+	   int total = getResult(left) + getResult(right);
+	   
+	   
+	   return total;
 		
 	}
-
-
-	public void parse() {
-		Stack<String> operator = new Stack<String> ();		
-		Stack<String> operand = new Stack<String> ();
-		
-		String expression = " ((scalar[scal_1] * driver[driv_1]) + scalar[scal_1]) - driver[drive_1] ";
 	
-		String string = StringUtils.substringBetween(expression, "(", ")");
+	private static int getResult(String function) {
 		
-		System.out.println(string);
-
-		/*
-		validateParenthesis(expression);
-		vaidateSquareBrackets(expression);
-		
-		char[] chars = expression.toCharArray();
-		
-		for(int i=0;i<chars.length;i++) {
+      if(function.contains("result")) {
 			
-			if(chars[i]=='(') {
-				
-			}
+			return interim.get(function);
+		}
+		
+		String code = function.substring(function.lastIndexOf("[")+1, function.indexOf("]"));
+		
+		if(function.contains("driver")) {
 			
-		}*/
+			return Driver.getValue(code);
+		}
+		
+		
+		if(function.contains("scalar")) {
 			
+			return Scalar.getValue(code);
+		}
 		
-	}
-
-	
-	private static void vaidateSquareBrackets(String expression) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private static void validateParenthesis(String expression) {
-		// TODO Auto-generated method stub
-		
+		return 0;	
 	}
 	
 }

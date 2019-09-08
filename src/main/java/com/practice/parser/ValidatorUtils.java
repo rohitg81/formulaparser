@@ -18,53 +18,34 @@ public class ValidatorUtils {
 		
 	}
 	
+	
 	public static void main(String[] args) {
 		
-	
+		
+		String expression = "result323/driver['scal_1'] /driver['driv_1']+ driver['driv_1']  -  scalar['driv_1'] + driver['driv_1']";
+			
+		boolean b2=Pattern.compile("result[0-9]*\\s*[-+*/]\\s*((driver|scalar)\\['[a-zA-Z0-9_]*'\\]\\s*(\\s*[-+*/]\\s*(driver|scalar)\\['[a-zA-Z0-9_]*'\\])*)").matcher(expression).matches();  
 		
 		
-	//	boolean b2=Pattern.compile("driver\\['[a-zA-Z0-9_]*'\\]").matcher("driver['driv_1_2']").matches();    
-		
-		
-	//	boolean b2=Pattern.compile("driver\\['[a-zA-Z0-9_]*'\\] [+]? driver\\['[a-zA-Z0-9_]*'\\]").matcher("driver['driv_1_2'] + driver['driv_1_2']").matches();   
-		
-	//	boolean b2=Pattern.compile("driver\\['[a-zA-Z0-9_]*'\\] [+]? scalar\\['[a-zA-Z0-9_]*'\\]").matcher("driver['driv_1_2'] + scalar['driv_1_2']").matches();   
-		
-      
-	//	boolean b2=Pattern.compile("driver\\['[a-zA-Z0-9_]*'\\]\\s+[+]?\\s+scalar\\['[a-zA-Z0-9_]*'\\]").matcher("driver['driv_1_2'] +    scalar['driv_1_2']").matches();   
-	
-		
-	//	boolean b2=Pattern.compile("driver\\['[a-zA-Z0-9_]*'\\]([+]driver\\['[a-zA-Z0-9_]*'\\])*").matcher("driver['driv_1_2']+driver['driv_1_2']+driver['driv_1_2']").matches();   
-		
-	//	boolean b2=Pattern.compile("driver\\['[a-zA-Z0-9_]*'\\]([+]driver\\['[a-zA-Z0-9_]*'\\])*").matcher("driver['driv_1_2']+driver['driv_1_2']+driver['driv_1_2']+driver['driv_1_2']+driver['driv_1_2']").matches();   
-	
-	//	boolean b2=Pattern.compile("(driver|scalar)\\['[a-zA-Z0-9_]*'\\]([+](driver|scalar)\\['[a-zA-Z0-9_]*'\\])*").matcher("driver['driv_1_2']+scalar['driv_1_2']").matches();   
-		
-	//	boolean b2=Pattern.compile("(driver|scalar)\\['[a-zA-Z0-9_]*'\\]([+](driver|scalar)\\['[a-zA-Z0-9_]*'\\])*").matcher("scalar['driv_1_2']+scalar['driv_1_2']").matches();   
-		
-	//	boolean b2=Pattern.compile("(driver|scalar)\\['[a-zA-Z0-9_]*'\\]([-+*/](driver|scalar)\\['[a-zA-Z0-9_]*'\\])*").matcher("scalar['driv_1_2']-scalar['driv_1_2']").matches();   
-		
-		boolean b2=Pattern.compile("(driver|scalar)\\['[a-zA-Z0-9_]*'\\]\\s*([-+*/]\\s*(driver|scalar)\\['[a-zA-Z0-9_]*'\\])*").matcher("scalar['driv_1_2']  -scalar['driv_1_2']").matches();   
+		boolean b3=Pattern.compile("(driver|scalar)\\['[a-zA-Z0-9_]*'\\]\\s*(\\s*[-+*/]\\s*(driver|scalar)\\['[a-zA-Z0-9_]*'\\])*").matcher(expression).matches();  
 		
 		
 		System.out.println(b2);
+		
 	}
 	
-	public static void checkIfContainsValidOperator(String expression) {
+
+	
+	public static boolean validateExpression(String expression) {
 		
-		AtomicBoolean isContains=new AtomicBoolean(false);
-		Set<String> keySet = operatorMap.keySet();
-		keySet.forEach(k-> {
-			if(expression.contains(k))
-				isContains.set(true);	
-		});
 		
-		if(isContains.get()==false) {
-			
-			throw new RuntimeException("The expression does not contain any valid operator");
-		}
-				
+		boolean match1= Pattern.compile("result[0-9]*\\s*[-+*/]\\s*((driver|scalar)\\['[a-zA-Z0-9_]*'\\]\\s*(\\s*[-+*/]\\s*(driver|scalar)\\['[a-zA-Z0-9_]*'\\])*)").matcher(expression).matches();  
+		
+		boolean match2= Pattern.compile("(driver|scalar)\\['[a-zA-Z0-9_]*'\\]\\s*(\\s*[-+*/]\\s*(driver|scalar)\\['[a-zA-Z0-9_]*'\\])*").matcher(expression).matches(); 
+		
+		return match1 || match2;
 	}
+	
 
 
 }
